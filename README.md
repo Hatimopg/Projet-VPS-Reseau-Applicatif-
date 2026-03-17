@@ -1,4 +1,4 @@
-# 🛡️ Infrastructure Hardening & Plateforme de Prévention (Project: Brocoli)
+# 🛡️ Infrastructure Hardening & Plateforme de Prévention
 
 > ⚠️ **DISCLAIMER :** Cette infrastructure (dontbesad.tech) n'est plus active. Les adresses IP, clés API et configurations exposées sont obsolètes. Ce dépôt est une archive technique documentant 3 mois de montée en compétence intensive en Cybersécurité et Admin Système.
 
