@@ -9,7 +9,9 @@ Au-delà de la technique, ce projet hébergeait une plateforme de prévention co
 - **Mission :** Offrir un espace de soutien via une interface web propre.
 - **Innovation AI :** Intégration d'un **Chatbot intelligent** (API OpenAI) capable de répondre aux utilisateurs en temps réel.
 - **Stack Web :** Frontend `chat.html` couplé à un `backend.php` pour la gestion des requêtes API.
-![Aperçu du site et du Chatbot](vps/site_overview.png)
+![Aperçu du site et du Chatbot](site1.png)
+![Aperçu du site et du Chatbot](site2.png)
+![Aperçu du site et du Chatbot](site3.png)
 
 ### 🔓 2. Hardening SSH & Accès Périmétrique
 Sécurisation de la porte d'entrée principale pour bloquer 99% des scans automatisés.
