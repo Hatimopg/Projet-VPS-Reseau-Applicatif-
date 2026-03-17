@@ -6,68 +6,73 @@
 
 ### 🌐 1. Le Projet : "DontBeSad.tech"
 Au-delà de la technique, ce projet hébergeait une plateforme de prévention contre la tristesse. 
-- **Mission :** Offrir un espace de soutien via une interface web propre.
-- **Innovation AI :** Intégration d'un **Chatbot intelligent** (API OpenAI) capable de répondre aux utilisateurs en temps réel.
-- **Stack Web :** Frontend `chat.html` couplé à un `backend.php` pour la gestion des requêtes API.
-![Aperçu du site et du Chatbot](site1.png)
-![Aperçu du site et du Chatbot](site2.png)
-![Aperçu du site et du Chatbot](site3.png)
-![Aperçu du site et du Chatbot](site4.png)
+- **Mission :** Offrir un espace de soutien via une interface web propre et interactive.
+- **Innovation AI :** Intégration d'un **Chatbot intelligent** (API OpenAI) configuré pour répondre aux utilisateurs en temps réel (investissement de 5€ pour le bien commun).
+- **Stack Web :** Frontend `chat.html` couplé à un `backend.php` pour la communication API.
+![Site Preview 1](site1.png)
+![Site Preview 2](site2.png)
+![Site Preview 3](site3.png)
+![Site Preview 4](site4.png)
 
 ### 🔓 2. Hardening SSH & Accès Périmétrique
-Sécurisation de la porte d'entrée principale pour bloquer 99% des scans automatisés.
-- **Mutation :** Port SSH déplacé du `22` au `1949`.
-- **Politique Zero Trust :** Désactivation du compte `root`, accès exclusif via clés SSH (Ed25519/RSA).
-- **Config :** Hardening via `/etc/ssh/sshd_config.d/50-cloud-init.conf`.
+Sécurisation de la porte d'entrée principale pour neutraliser les vecteurs d'attaque classiques.
+- **Obscurité active :** Migration du port SSH du `22` au `1949`.
+- **IAM :** Suppression du compte `root`, création d'un utilisateur privilégié et authentification par clés SSH (Ed25519) uniquement.
+- **Hardening :** Configuration via `sudo nano /etc/ssh/sshd_config.d/50-cloud-init.conf`.
 
 ### 🧱 3. Firewalling Stricte (UFW) & Réseau
-- **Whitelist IP :** Seule mon IP personnelle est autorisée à solliciter le port SSH.
-- **IPv6 Hardening :** Désactivation totale de la pile IPv6 pour réduire la surface d'attaque.
-- **Status :** Contrôle permanent via `sudo ufw status verbose`.
-![Screenshots Firewall](tunnel.png)
+- **Whitelist IP :** Seule mon IP personnelle est autorisée à solliciter le port SSH `1949`.
+- **IPv6 Hardening :** Désactivation complète de l'IPv6 (`/etc/default/ufw`) pour limiter les vecteurs de fuite.
+- **Monitoring :** Contrôle via `sudo ufw status verbose`.
+![Tunnel & Network](tunnel.png)
 
 ### ⛓️ 4. IPS & Monitoring des Menaces (Fail2Ban)
-Mise en place de "prisons" dynamiques pour un bannissement automatique des IPs malveillantes.
-- **Jails Custom :** `sshd` (port 1949), `sshd-preauth` (détection fine via regex) et `cowrie` (Honeypot).
-- **Ban Auto :** Configuration de `bantime` à 3600s et jusqu'à 24h pour les attaques sur le Honeypot.
-- **Commandes :** Utilisation intensive de `fail2ban-client status`.
-![Bans en temps réel](fail2ban1.png)
-![Bans en temps réel](fail2ban2.png)
-![Bans en temps réel](cowrie1.png)
-![Bans en temps réel](cowrie2.png)
-
+Mise en place de "prisons" dynamiques avec bannissement automatique.
+- **Jails Custom :** `sshd` (port 1949), `sshd-preauth` (regex pour intercepter les pre-auth failures) et `cowrie` (Honeypot).
+- **Hardening temporel :** `findtime = 600`, `bantime = 3600` (ou 24h pour le honeypot).
+- **Gestion manuelle :** Bannissement manuel via `fail2ban-client set [jail] banip [IP]`.
+![Fail2Ban 1](fail2ban1.png)
+![Fail2Ban 2](fail2ban2.png)
+![Cowrie Jail 1](cowrie1.png)
+![Cowrie Jail 2](cowrie2.png)
 
 ### 🍯 5. Threat Intelligence : Cowrie Honeypot
-Observation active des attaquants via un leurre sophistiqué.
-- **Leurre :** Simulation d'un serveur vulnérable sur le port `2222` (vu comme le 22 par l'attaquant).
-- **Collecte :** Analyse des tentatives de login via `userdb.txt` et monitoring des logs via `bin/cowrie start`.
-- **Analyse :** Script Python `analyse_logs.py` pour cartographier les attaquants.
-![Logs Honeypot](honeypot1.png)
-![Logs Honeypot](honeypot2.png)
-![Logs Honeypot](honeypot3.png)
+Observation et analyse des payloads et comportements des attaquants.
+- **Leurre :** Simulation d'un shell vulnérable sur le port `2222`.
+- **Configuration :** Gestion des bannières custom dans `banner.txt` et base de credentials factices dans `userdb.txt`.
+- **Analyse :** Script Python `analyse_logs.py` pour générer des rapports sur les tentatives de login.
+![Honeypot 1](honeypot1.png)
+![Honeypot 2](honeypot2.png)
+![Honeypot 3](honeypot3.png)
 
-
-### 📧 6. Infrastructure Mail Souveraine (Mailcow & Postfix)
-Déploiement d'une stack mail complète et sécurisée sous Docker.
-- **Délivrabilité :** Configuration DKIM, SPF et signatures via `opendkim` pour éviter les spams.
-- **Docker :** Utilisation de `docker-compose` pour orchestrer Mailcow (Postfix, Dovecot, SOGo).
-- **Sécurité :** Reverse proxy Nginx avec certificats SSL et filtrage Rspamd.
-![Mailcow & Postfix](.png)
+### 📧 6. Infrastructure Mail : Mutt & Mailcow
+Gestion des flux mail, de la CLI vers l'automatisation.
+- **Mutt (CLI) :** Utilisation principale de `Mutt` pour l'envoi de logs et de fichiers (photos) directement depuis le serveur. Configuration du `.muttrc` pour la gestion des alias.
+- **Postfix & DKIM :** Configuration de `opendkim` pour la signature des messages et la délivrabilité.
+- **Mailcow (Docker) :** Déploiement d'une instance Mailcow via `docker-compose` en fin de projet pour centraliser l'interface et le reverse proxy SSL, servant de base à une automatisation plus "pro".
+![mail 1](mutt1.png)
+![mail 2](mutt2.png)
+![mail 3](mutt3.png)
+![mail 4](mutt4.png)
+![mail 5](mutt5.png)
+![mail 6](mutt6.png)
+![mail 7](mailcow.png)
 
 ### 📊 7. Monitoring & Stealth Management (Netdata)
-Surveillance des performances sans exposition publique.
-- **Metrics :** Monitoring CPU/RAM/IO via Netdata (port 19999).
-- **Accès Sécurisé :** Port fermé sur le Firewall, accès uniquement via un **Tunnel SSH local** : `ssh -p 1949 -L 19999:localhost:19999`.
-![Dashboard Netdata](vps/netdata_metrics.png)
+- **Metrics :** Surveillance en temps réel via Netdata (port 19999).
+- **Accès Sécurisé :** Port fermé sur le Firewall. Accès uniquement via **Tunnel SSH local** : `ssh -p 1949 -L 19999:localhost:19999 [user]@[IP]`.
+![Netdata 1](monitoring1.png)
+![Netdata 2](monitoring2.png)
+![Netdata 3](monitoring3.png)
 
 ### 🧪 8. Deception supplémentaire & Lab
-- **Socat :** Simulation de faux services (port 25565) avec messages de "troll" pour les scanners de ports.
-- **Docker :** Gestion des conteneurs et des images via `docker ps`.
-![Screenshots Socat & Docker](vps/docker_socat.png)
+- **Socat :** Simulation de faux services (port 25565) avec message de dérision pour les scanners : `"§cC'est un faux serveur mdr t genant"`.
+- **Docker :** Orchestration des services via `docker-compose` et isolation des environnements.
+![Docker & Socat](socat.png)
 
 ---
 
 ### ⚡ Bilan & Expérience
-Ce projet est le résultat de **3 mois** de travail acharné. L'objectif n'était pas seulement de monter un serveur, mais de créer un écosystème complet, sécurisé et utile. 
+Ce projet est le résultat de **3 mois** de travail acharné. L'objectif était de construire un écosystème complet, utile et sécurisé.
 - **Gain d'expérience :** Hardening Linux, administration Docker, gestion DNS/SSL, analyse de logs de sécurité et intégration d'IA.
-- **Finalité :** Apprendre à défendre une infrastructure en comprenant comment elle est attaquée.
+- **Conclusion :** Apprendre la défense en profondeur en observant directement les méthodes d'attaque réelles.
