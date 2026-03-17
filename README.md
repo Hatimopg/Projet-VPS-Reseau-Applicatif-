@@ -12,40 +12,47 @@ Au-delà de la technique, ce projet hébergeait une plateforme de prévention co
 ![Aperçu du site et du Chatbot](site1.png)
 ![Aperçu du site et du Chatbot](site2.png)
 ![Aperçu du site et du Chatbot](site3.png)
+![Aperçu du site et du Chatbot](site4.png)
 
 ### 🔓 2. Hardening SSH & Accès Périmétrique
 Sécurisation de la porte d'entrée principale pour bloquer 99% des scans automatisés.
 - **Mutation :** Port SSH déplacé du `22` au `1949`.
 - **Politique Zero Trust :** Désactivation du compte `root`, accès exclusif via clés SSH (Ed25519/RSA).
 - **Config :** Hardening via `/etc/ssh/sshd_config.d/50-cloud-init.conf`.
-![Preuve config SSH](vps/ssh_setup.png)
 
 ### 🧱 3. Firewalling Stricte (UFW) & Réseau
 - **Whitelist IP :** Seule mon IP personnelle est autorisée à solliciter le port SSH.
 - **IPv6 Hardening :** Désactivation totale de la pile IPv6 pour réduire la surface d'attaque.
 - **Status :** Contrôle permanent via `sudo ufw status verbose`.
-![Screenshots Firewall](vps/ufw_rules.png)
+![Screenshots Firewall](tunnel.png)
 
 ### ⛓️ 4. IPS & Monitoring des Menaces (Fail2Ban)
 Mise en place de "prisons" dynamiques pour un bannissement automatique des IPs malveillantes.
 - **Jails Custom :** `sshd` (port 1949), `sshd-preauth` (détection fine via regex) et `cowrie` (Honeypot).
 - **Ban Auto :** Configuration de `bantime` à 3600s et jusqu'à 24h pour les attaques sur le Honeypot.
 - **Commandes :** Utilisation intensive de `fail2ban-client status`.
-![Bans en temps réel](vps/fail2ban_status.png)
+![Bans en temps réel](fail2ban1.png)
+![Bans en temps réel](fail2ban2.png)
+![Bans en temps réel](cowrie1.png)
+![Bans en temps réel](cowrie2.png)
+
 
 ### 🍯 5. Threat Intelligence : Cowrie Honeypot
 Observation active des attaquants via un leurre sophistiqué.
 - **Leurre :** Simulation d'un serveur vulnérable sur le port `2222` (vu comme le 22 par l'attaquant).
 - **Collecte :** Analyse des tentatives de login via `userdb.txt` et monitoring des logs via `bin/cowrie start`.
 - **Analyse :** Script Python `analyse_logs.py` pour cartographier les attaquants.
-![Logs Honeypot](vps/cowrie_data.png)
+![Logs Honeypot](honeypot1.png)
+![Logs Honeypot](honeypot2.png)
+![Logs Honeypot](honeypot3.png)
+
 
 ### 📧 6. Infrastructure Mail Souveraine (Mailcow & Postfix)
 Déploiement d'une stack mail complète et sécurisée sous Docker.
 - **Délivrabilité :** Configuration DKIM, SPF et signatures via `opendkim` pour éviter les spams.
 - **Docker :** Utilisation de `docker-compose` pour orchestrer Mailcow (Postfix, Dovecot, SOGo).
 - **Sécurité :** Reverse proxy Nginx avec certificats SSL et filtrage Rspamd.
-![Mailcow & Postfix](vps/mail_stack.png)
+![Mailcow & Postfix](.png)
 
 ### 📊 7. Monitoring & Stealth Management (Netdata)
 Surveillance des performances sans exposition publique.
